@@ -21,6 +21,7 @@ public class Card : MonoBehaviour
     [SerializeField] private Image frontImage;
     [SerializeField] private Image backImage;
 
+   
     [Header("Animation Settings")]
     public float flipSpeed = 0.3f;
     public AnimationCurve flipCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -28,17 +29,23 @@ public class Card : MonoBehaviour
     public float matchScaleDuration = 0.3f;
 
     private bool isAnimating;
-    private bool canClick = false;
+    private bool isBeingProcessed = false;
     private Button cardButton;
     private Material frontMaterialInstance;
+    private Coroutine currentFlipCoroutine;
 
     private void Awake()
     {
         ValidateReferences();
         cardButton = GetComponent<Button>();
 
+        if (cardButton != null)
+        {
+            cardButton.onClick.RemoveAllListeners();
+            cardButton.onClick.AddListener(OnClick);
+        }
+
       
-        DisableInteraction();
     }
 
     private void ValidateReferences()
@@ -66,18 +73,45 @@ public class Card : MonoBehaviour
 
     public void OnClick()
     {
-        if (state != CardState.FaceDown || isAnimating || !canClick)
+        Debug.Log($"Card clicked! State: {state}, Animating: {isAnimating}, Processing: {isBeingProcessed}");
+
+        if (GameManager.Instance == null)
         {
+            Debug.LogError("GameManager.Instance is null!");
             return;
         }
 
-        StartCoroutine(FlipToFront());
+        if (!GameManager.Instance.CanFlipCard(this))
+        {
+            Debug.Log("GameManager says card cannot be flipped");
+            return;
+        }
+
+        if (state != CardState.FaceDown || isAnimating || isBeingProcessed)
+        {
+            Debug.Log($"Card blocked - State: {state}, Animating: {isAnimating}, Processing: {isBeingProcessed}");
+            return;
+        }
+
+        if (currentFlipCoroutine != null)
+        {
+            StopCoroutine(currentFlipCoroutine);
+        }
+
+        currentFlipCoroutine = StartCoroutine(FlipToFront());
     }
 
     IEnumerator FlipToFront()
     {
         isAnimating = true;
         state = CardState.Flipping;
+
+        if (cardButton != null)
+        {
+            cardButton.interactable = false;
+        }
+
+        AudioManager.Instance?.PlayFlip();
 
         float elapsed = 0f;
         float halfFlipTime = flipSpeed / 2f;
@@ -91,8 +125,8 @@ public class Card : MonoBehaviour
             yield return null;
         }
 
-        back.SetActive(false);
-        front.SetActive(true);
+        if (back != null) back.SetActive(false);
+        if (front != null) front.SetActive(true);
 
         elapsed = 0f;
         while (elapsed < halfFlipTime)
@@ -107,14 +141,24 @@ public class Card : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 180, 0);
         state = CardState.FaceUp;
         isAnimating = false;
+        currentFlipCoroutine = null;
 
         GameManager.Instance?.OnCardRevealed(this);
     }
 
     public void FlipBack()
     {
-        if (state == CardState.Matched) return;
-        StartCoroutine(FlipToBack());
+        if (state == CardState.Matched)
+        {
+            return;
+        }
+
+        if (currentFlipCoroutine != null)
+        {
+            StopCoroutine(currentFlipCoroutine);
+        }
+
+        currentFlipCoroutine = StartCoroutine(FlipToBack());
     }
 
     IEnumerator FlipToBack()
@@ -134,8 +178,8 @@ public class Card : MonoBehaviour
             yield return null;
         }
 
-        front.SetActive(false);
-        back.SetActive(true);
+        if (front != null) front.SetActive(false);
+        if (back != null) back.SetActive(true);
 
         elapsed = 0f;
         while (elapsed < halfFlipTime)
@@ -150,19 +194,51 @@ public class Card : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0);
         state = CardState.FaceDown;
         isAnimating = false;
+        currentFlipCoroutine = null;
+
+        if (!isBeingProcessed)
+        {
+            EnableInteraction();
+        }
     }
 
     public void FlipInstant(bool showFront)
     {
+        if (currentFlipCoroutine != null)
+        {
+            StopCoroutine(currentFlipCoroutine);
+            currentFlipCoroutine = null;
+        }
+
+        isAnimating = false;
         state = showFront ? CardState.FaceUp : CardState.FaceDown;
-        front.SetActive(showFront);
-        back.SetActive(!showFront);
+        if (front != null) front.SetActive(showFront);
+        if (back != null) back.SetActive(!showFront);
         transform.rotation = Quaternion.Euler(0, showFront ? 180 : 0, 0);
+    }
+
+    public void SetProcessing(bool processing)
+    {
+        isBeingProcessed = processing;
+
+        if (!processing && state == CardState.FaceDown)
+        {
+            Debug.Log("processing");
+            EnableInteraction();
+        }
     }
 
     public void SetMatched()
     {
+        if (currentFlipCoroutine != null)
+        {
+            StopCoroutine(currentFlipCoroutine);
+            currentFlipCoroutine = null;
+        }
+
         state = CardState.Matched;
+        isAnimating = false;
+        isBeingProcessed = false;
         DisableInteraction();
         StartCoroutine(MatchAnimation());
     }
@@ -193,9 +269,9 @@ public class Card : MonoBehaviour
         }
 
         transform.localScale = originalScale;
-
     }
 
+   
 
     public void SetCardSprites(Sprite backSprite, Sprite frontSprite)
     {
@@ -217,9 +293,15 @@ public class Card : MonoBehaviour
 
     public void ResetCard()
     {
+        if (currentFlipCoroutine != null)
+        {
+            StopCoroutine(currentFlipCoroutine);
+            currentFlipCoroutine = null;
+        }
+
         state = CardState.FaceDown;
         isAnimating = false;
-        canClick = false;
+        isBeingProcessed = false;
 
         if (front != null) front.SetActive(false);
         if (back != null) back.SetActive(true);
@@ -240,7 +322,6 @@ public class Card : MonoBehaviour
 
     public void DisableInteraction()
     {
-        canClick = false;
         if (cardButton != null)
         {
             cardButton.interactable = false;
@@ -249,13 +330,17 @@ public class Card : MonoBehaviour
 
     public void EnableInteraction()
     {
-        if (state != CardState.Matched)
+        if (state == CardState.FaceDown && !isAnimating && !isBeingProcessed)
         {
-            canClick = true;
             if (cardButton != null)
             {
                 cardButton.interactable = true;
+                Debug.Log($"Card {cardID} enabled");
             }
+        }
+        else
+        {
+            Debug.Log($"Card {cardID} NOT enabled - State: {state}, Animating: {isAnimating}, Processing: {isBeingProcessed}");
         }
     }
 }

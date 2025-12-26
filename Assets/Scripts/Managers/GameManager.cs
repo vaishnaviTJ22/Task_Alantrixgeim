@@ -7,9 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("Mismatch Settings")]
-    public float mismatchFlipBackDelay = 1.0f;
-
     [Header("Preview Settings")]
     public float defaultPreviewDuration = 2f;
 
@@ -21,7 +18,7 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnPreviewEnd;
 
     private List<Card> revealedCards = new List<Card>();
-    private bool isProcessingMatch = false;
+    private HashSet<Card> cardsBeingProcessed = new HashSet<Card>();
     private bool isGameOver = false;
     private bool isInPreview = false;
 
@@ -49,10 +46,10 @@ public class GameManager : MonoBehaviour
         else
         {
             BoardManager.Instance.GenerateBoard(4, 4);
-            StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
+          //  StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
         }
 
-      
+        SaveSystem.Load();
     }
 
     private void Update()
@@ -102,9 +99,9 @@ public class GameManager : MonoBehaviour
             card.FlipBack();
         }
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
-        EnableAllCardsInteraction();
+        //EnableAllCardsInteraction();
 
         isInPreview = false;
         OnPreviewEnd?.Invoke();
@@ -151,57 +148,91 @@ public class GameManager : MonoBehaviour
         return $"{minutes:00}:{seconds:00}";
     }
 
+    public bool CanFlipCard(Card card)
+    {
+        if (isGameOver || isInPreview) return false;
+        if (cardsBeingProcessed.Contains(card)) return false;
+        if (card.state != CardState.FaceDown) return false;
+        return true;
+    }
+
     public void OnCardRevealed(Card card)
     {
-        if (isProcessingMatch || isGameOver || isInPreview) return;
+        if (isGameOver || isInPreview) return;
+
+        if (cardsBeingProcessed.Contains(card))
+        {
+            return;
+        }
 
         revealedCards.Add(card);
 
         if (revealedCards.Count >= 2)
         {
-            isProcessingMatch = true;
-            StartCoroutine(ProcessCardMatch());
+            Card a = revealedCards[revealedCards.Count - 2];
+            Card b = revealedCards[revealedCards.Count - 1];
+
+            revealedCards.RemoveAt(revealedCards.Count - 1);
+            revealedCards.RemoveAt(revealedCards.Count - 1);
+
+            StartCoroutine(ProcessCardPair(a, b));
         }
     }
 
-    IEnumerator ProcessCardMatch()
+    IEnumerator ProcessCardPair(Card a, Card b)
     {
-        yield return new WaitForSeconds(0.3f);
-
-        Card a = revealedCards[^2];
-        Card b = revealedCards[^1];
-
-        if (a == b)
+        if (a == null || b == null || a == b)
         {
-            isProcessingMatch = false;
             yield break;
         }
+
+        cardsBeingProcessed.Add(a);
+        cardsBeingProcessed.Add(b);
+
+        a.SetProcessing(true);
+        b.SetProcessing(true);
+
+        yield return new WaitForSeconds(0.3f);
 
         if (a.cardID == b.cardID)
         {
             a.SetMatched();
             b.SetMatched();
             ScoringManager.Instance.AddScore(true);
+            AudioManager.Instance?.PlayMatch();
 
-            revealedCards.Clear();
+            cardsBeingProcessed.Remove(a);
+            cardsBeingProcessed.Remove(b);
+
             CheckLevelComplete();
         }
         else
         {
             ScoringManager.Instance.AddScore(false);
+            AudioManager.Instance?.PlayMismatch();
 
-            float hideDelay = LevelManager.Instance != null
-                ? LevelManager.Instance.CurrentLevel.mismatchHideDelay
-                : mismatchFlipBackDelay;
+            float hideDelay = LevelManager.Instance.CurrentLevel.mismatchHideDelay;
 
             yield return new WaitForSeconds(hideDelay);
 
-            a.FlipBack();
-            b.FlipBack();
-            revealedCards.Clear();
-        }
+            if (a != null && a.state == CardState.FaceUp)
+            {
+                a.FlipBack();
+            }
 
-        isProcessingMatch = false;
+            if (b != null && b.state == CardState.FaceUp)
+            {
+                b.FlipBack();
+            }
+
+            yield return new WaitForSeconds(0.3f);
+
+            cardsBeingProcessed.Remove(a);
+            cardsBeingProcessed.Remove(b);
+
+            a.SetProcessing(false);
+            b.SetProcessing(false);
+        }
     }
 
     void CheckLevelComplete()
@@ -217,23 +248,35 @@ public class GameManager : MonoBehaviour
             {
                 LevelConfig level = LevelManager.Instance.CurrentLevel;
                 ScoringManager.Instance.AddTimeBonus(elapsedTime, level.timeBonusMultiplier * 100);
+
+                int levelNumber = LevelManager.Instance.CurrentLevelNumber;
+                int score = ScoringManager.Instance.Score;
+                SaveSystem.SaveLevelProgress(levelNumber - 1, score, true);
+
+                if (LevelManager.Instance.HasNextLevel())
+                {
+                    StartCoroutine(AutoLoadNextLevel());
+                }
             }
             else
             {
                 ScoringManager.Instance.AddTimeBonus(elapsedTime);
             }
 
-
-            if (LevelManager.Instance != null)
-            {
-                int levelNumber = LevelManager.Instance.CurrentLevelNumber;
-                int score = ScoringManager.Instance.Score;
-            }
-
-           
+            AudioManager.Instance?.PlayGameOver();
+            SaveSystem.Save();
 
             Debug.Log($"Level Complete! Time: {GetFormattedTime(false)}");
         }
+    }
+
+    IEnumerator AutoLoadNextLevel()
+    {
+        yield return new WaitForSeconds(3f);
+
+        if (!isGameOver) yield break;
+
+        LoadNextLevel();
     }
 
     private void TimerExpired()
@@ -247,11 +290,13 @@ public class GameManager : MonoBehaviour
 
         DisableAllCardsInteraction();
 
+        AudioManager.Instance?.PlayGameOver();
     }
 
     private void DisableAllCardsInteraction()
     {
-        foreach (var card in BoardManager.Instance.GetCards())
+        List<Card> cards = BoardManager.Instance.GetCards();
+        foreach (var card in cards)
         {
             if (card != null)
             {
@@ -262,9 +307,12 @@ public class GameManager : MonoBehaviour
 
     private void EnableAllCardsInteraction()
     {
-        foreach (var card in BoardManager.Instance.GetCards())
+        if (isGameOver || isInPreview) return;
+
+        List<Card> cards = BoardManager.Instance.GetCards();
+        foreach (var card in cards)
         {
-            if (card != null)
+            if (card != null && card.state == CardState.FaceDown)
             {
                 card.EnableInteraction();
             }
@@ -291,14 +339,14 @@ public class GameManager : MonoBehaviour
         else
         {
             BoardManager.Instance.GenerateBoard(4, 4);
-            StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
+           // StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
         }
     }
 
     private void ResetGameState()
     {
         revealedCards.Clear();
-        isProcessingMatch = false;
+        cardsBeingProcessed.Clear();
         isGameOver = false;
         isInPreview = false;
         ResetTimer();
