@@ -98,7 +98,7 @@ MonoBehaviour:
   back: {fileID: 2376013529019441958}
   frontImage: {fileID: 2376013528910758989}
   backImage: {fileID: 2376013529019441956}
-  flipSpeed: 0.3
+  flipSpeed: 0.1
   flipCurve:
     serializedVersion: 2
     m_Curve:
@@ -112,8 +112,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 1
-      value: 1
+      time: 1.0125122
+      value: 0.5047188
       inSlope: 0
       outSlope: 0
       tangentMode: 0

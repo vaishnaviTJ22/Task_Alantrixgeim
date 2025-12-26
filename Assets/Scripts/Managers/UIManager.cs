@@ -10,16 +10,13 @@ public class UIManager : MonoBehaviour
     [Header("Score UI")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI targetScoreText;
-    [SerializeField] private Image scoreProgressBar;
 
     [Header("Timer UI")]
     [SerializeField] private TextMeshProUGUI timerText;
 
     [Header("Combo UI")]
     [SerializeField] private GameObject comboPanel;
-    [SerializeField] private TextMeshProUGUI comboText;
     [SerializeField] private TextMeshProUGUI comboMultiplierText;
-    [SerializeField] private Animator comboAnimator;
 
     [Header("Level Info")]
     [SerializeField] private TextMeshProUGUI levelNameText;
@@ -27,7 +24,6 @@ public class UIManager : MonoBehaviour
 
     [Header("Game Over Panel")]
     [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private TextMeshProUGUI gameOverTitleText;
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private TextMeshProUGUI finalTimeText;
     [SerializeField] private Button nextLevelButton;
@@ -63,7 +59,6 @@ public class UIManager : MonoBehaviour
         {
             ScoringManager.Instance.OnScoreChanged.AddListener(UpdateScore);
             ScoringManager.Instance.OnComboChanged.AddListener(UpdateCombo);
-            ScoringManager.Instance.OnTargetScoreSet.AddListener(UpdateTargetScore);
         }
 
         if (GameManager.Instance != null)
@@ -103,13 +98,9 @@ public class UIManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = $"Score: {score}";
+            scoreText.text = $"Score: {score}/ ";
         }
 
-        if (scoreProgressBar != null)
-        {
-            scoreProgressBar.fillAmount = ScoringManager.Instance.GetScoreProgress();
-        }
     }
 
     public void UpdateCombo(int combo, int multiplier)
@@ -118,37 +109,17 @@ public class UIManager : MonoBehaviour
         {
             if (comboPanel != null) comboPanel.SetActive(true);
 
-            if (comboText != null)
-            {
-                comboText.text = $"COMBO!";
-            }
+           
 
             if (comboMultiplierText != null)
             {
                 comboMultiplierText.text = $"x{multiplier}";
             }
 
-            if (comboAnimator != null)
-            {
-                comboAnimator.SetTrigger("Combo");
-            }
         }
         else
         {
             if (comboPanel != null) comboPanel.SetActive(false);
-        }
-    }
-
-    public void UpdateTargetScore(int current, int target)
-    {
-        if (targetScoreText != null)
-        {
-            targetScoreText.text = $"Target: {target}";
-        }
-
-        if (scoreProgressBar != null)
-        {
-            scoreProgressBar.fillAmount = ScoringManager.Instance.GetScoreProgress();
         }
     }
 
@@ -199,12 +170,7 @@ public class UIManager : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
 
-            if (gameOverTitleText != null)
-            {
-                gameOverTitleText.text = "LEVEL COMPLETE!";
-                gameOverTitleText.color = Color.green;
-            }
-
+           
             if (finalScoreText != null)
             {
                 finalScoreText.text = $"Final Score: {ScoringManager.Instance.Score}";
@@ -228,12 +194,6 @@ public class UIManager : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
-
-            if (gameOverTitleText != null)
-            {
-                gameOverTitleText.text = "TIME'S UP!";
-                gameOverTitleText.color = Color.red;
-            }
 
             if (finalScoreText != null)
             {

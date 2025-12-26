@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c063abfc1e1d2654399a19bb9791b181, type: 3}
+  m_Name: Level1
+  m_EditorClassIdentifier: 
+  levelNumber: 1
+  levelName: Easy
+  rows: 2
+  columns: 2
+  usePreview: 1
+  previewDuration: 1
+  useTimeLimit: 1
+  timeLimitSeconds: 180
+  timeBonusMultiplier: 10
+  cardFlipSpeed: 0.3
+  mismatchHideDelay: 0.2
+  matchBonus: 100
+  mismatchPenalty: 10
+  targetScore: 1000
+  cardBackSprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  cardFrontSprites:
+  - {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}

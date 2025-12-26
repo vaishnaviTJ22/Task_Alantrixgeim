@@ -99,16 +99,6 @@ public class ScoringManager : MonoBehaviour
         Debug.Log("Score Reset");
     }
 
-    public bool HasReachedTarget()
-    {
-        return Score >= TargetScore;
-    }
-
-    public float GetScoreProgress()
-    {
-        if (TargetScore <= 0) return 0f;
-        return Mathf.Clamp01((float)Score / TargetScore);
-    }
 
     public void AddTimeBonus(float timeElapsed, int maxBonus = 500)
     {
