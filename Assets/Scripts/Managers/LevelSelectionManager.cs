@@ -45,25 +45,29 @@ public class LevelSelectionManager : MonoBehaviour
         {
             int levelNum = i + 1;
             GameObject btnObj = Instantiate(levelButtonPrefab, buttonsContainer);
-            Button btn = btnObj.GetComponentInChildren<Button>();
-            
-            // Setup Text
-            TextMeshProUGUI btnText = btnObj.GetComponentInChildren<TextMeshProUGUI>();
-            if (btnText != null)
+            LevelButtonUI btnUI = btnObj.GetComponent<LevelButtonUI>();
+
+            if (btnUI != null)
             {
-                btnText.text = $"Level {levelNum}";
+                bool isUnlocked = levelNum <= highestUnlocked;
+                int score = 0;
+
+                // Find score for this level
+                if (saveData != null && saveData.levelScores != null)
+                {
+                    var progress = saveData.levelScores.Find(x => x.levelNumber == levelNum);
+                    if (progress != null)
+                    {
+                        score = progress.bestScore;
+                    }
+                }
+
+                btnUI.Setup(levelNum, score, isUnlocked, OnLevelClicked);
             }
-            
-            // Setup Lock State
-            bool isUnlocked = levelNum <= highestUnlocked;
-            btn.interactable = isUnlocked;
-
-            // Visual feedback for locked levels (optional - depends on prefab)
-            // if (!isUnlocked) { ... }
-
-            // Add Click Listener
-            int index = i; // Local copy for closure
-            btn.onClick.AddListener(() => OnLevelClicked(index));
+            else
+            {
+                Debug.LogError("LevelButtonPrefab does not have LevelButtonUI component!");
+            }
         }
     }
 

@@ -61,6 +61,7 @@ public class BoardManager : MonoBehaviour
                 if (levelConfig != null)
                 {
                     int spriteIndex = ids[index] % levelConfig.cardFrontSprites.Length;
+                    card.cardID = spriteIndex;
                     card.SetCardSprites(
                         levelConfig.cardBackSprite,
                         levelConfig.cardFrontSprites[spriteIndex]
