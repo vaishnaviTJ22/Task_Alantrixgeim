@@ -56,9 +56,7 @@ public class LevelManager : MonoBehaviour
         }
 
         BoardManager.Instance.GenerateBoard(level.rows, level.columns, level);
-        ScoringManager.Instance.SetLevelTargetScore(level.targetScore);
         ScoringManager.Instance.SetLevelScoring(level.matchBonus, level.mismatchPenalty);
-
         if (level.usePreview)
         {
             GameManager.Instance.StartLevelWithPreview(
@@ -71,6 +69,8 @@ public class LevelManager : MonoBehaviour
         {
             GameManager.Instance.StartTimer(level.timeLimitSeconds, level.useTimeLimit);
         }
+
+        UIManager.Instance.SetLevelInfo(level.levelNumber);
 
         Debug.Log($"Loaded Level {level.levelNumber}: {level.levelName}");
         Debug.Log($"Preview: {(level.usePreview ? $"{level.previewDuration}s" : "Disabled")}");

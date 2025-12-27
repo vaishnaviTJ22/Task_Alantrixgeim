@@ -55,7 +55,6 @@ MonoBehaviour:
   levelNumberText: {fileID: 728048192883960539}
   scoreText: {fileID: 1190185517103091292}
   lockIcon: {fileID: 9201216802686101093}
-  starContainer: {fileID: 0}
 --- !u!1 &728048192375997327
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,7 +85,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 728048192883960541}
   m_Father: {fileID: 1190185517816751399}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -207,12 +207,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1190185517816751399}
-  m_RootOrder: 1
+  m_Father: {fileID: 728048192375997312}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 66.237}
+  m_AnchoredPosition: {x: 0, y: 5.8269653}
   m_SizeDelta: {x: 184.09, y: 132.47}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &728048192883960543
@@ -476,7 +476,6 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 728048192375997312}
-  - {fileID: 728048192883960541}
   - {fileID: 1190185518656230512}
   m_Father: {fileID: 728048191800129027}
   m_RootOrder: 0
@@ -519,7 +518,7 @@ RectTransform:
   - {fileID: 1190185517103091293}
   - {fileID: 1190185518952914994}
   m_Father: {fileID: 1190185517816751399}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}

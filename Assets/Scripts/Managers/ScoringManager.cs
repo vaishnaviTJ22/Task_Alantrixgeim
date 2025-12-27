@@ -16,7 +16,7 @@ public class ScoringManager : MonoBehaviour
     public int TargetScore { get; private set; }
 
     [Header("Default Scoring")]
-    public int defaultMatchScore = 100;
+    public int defaultMatchScore = 10;
     public int defaultMismatchPenalty = 10;
 
     private int currentMatchScore;
@@ -70,12 +70,6 @@ public class ScoringManager : MonoBehaviour
         OnScoreChanged?.Invoke(Score);
     }
 
-    public void SetLevelTargetScore(int target)
-    {
-        TargetScore = target;
-        OnTargetScoreSet?.Invoke(Score, TargetScore);
-        Debug.Log($"Target Score set to: {target}");
-    }
 
     public void SetLevelScoring(int matchScore, int mismatchPenalty)
     {
@@ -108,10 +102,4 @@ public class ScoringManager : MonoBehaviour
         Debug.Log($"Time Bonus! +{bonus}");
     }
 
-    public void AddPerfectMatchBonus(int bonus = 1000)
-    {
-        Score += bonus;
-        OnScoreChanged?.Invoke(Score);
-        Debug.Log($"Perfect Match Bonus! +{bonus}");
-    }
 }

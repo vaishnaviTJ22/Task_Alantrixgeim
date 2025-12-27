@@ -245,35 +245,43 @@ public class GameManager : MonoBehaviour
     {
         if (BoardManager.Instance.AllMatched())
         {
-            isGameOver = true;
-            StopTimer();
-
-            OnLevelComplete?.Invoke(elapsedTime);
-
-            if (LevelManager.Instance != null)
-            {
-                LevelConfig level = LevelManager.Instance.CurrentLevel;
-                ScoringManager.Instance.AddTimeBonus(elapsedTime, level.timeBonusMultiplier * 100);
-
-                int levelNumber = LevelManager.Instance.CurrentLevelNumber;
-                int score = ScoringManager.Instance.Score;
-                SaveSystem.SaveLevelProgress(levelNumber - 1, score, true);
-
-                if (LevelManager.Instance.HasNextLevel())
-                {
-                    StartCoroutine(AutoLoadNextLevel());
-                }
-            }
-            else
-            {
-                ScoringManager.Instance.AddTimeBonus(elapsedTime);
-            }
-
-            AudioManager.Instance?.PlayGameOver();
-            SaveSystem.Save();
-
-            Debug.Log($"Level Complete! Time: {GetFormattedTime(false)}");
+            StartCoroutine(HandleLevelCompleteSequence());
         }
+    }
+
+    IEnumerator HandleLevelCompleteSequence()
+    {
+        isGameOver = true;
+        StopTimer();
+
+        yield return new WaitForSeconds(2.0f);
+
+        OnLevelComplete?.Invoke(elapsedTime);
+
+        if (LevelManager.Instance != null)
+        {
+            LevelConfig level = LevelManager.Instance.CurrentLevel;
+            ScoringManager.Instance.AddTimeBonus(elapsedTime, level.timeBonusMultiplier * 100);
+
+            int levelNumber = LevelManager.Instance.CurrentLevelNumber;
+            int score = ScoringManager.Instance.Score;
+            // Fix: Pass levelNumber directly (1-based) as expected by SaveSystem and LevelSelectionManager
+            SaveSystem.SaveLevelProgress(levelNumber, score, true);
+
+            if (LevelManager.Instance.HasNextLevel())
+            {
+                StartCoroutine(AutoLoadNextLevel());
+            }
+        }
+        else
+        {
+            ScoringManager.Instance.AddTimeBonus(elapsedTime);
+        }
+
+        AudioManager.Instance?.PlayGameOver();
+        SaveSystem.Save();
+
+        Debug.Log($"Level Complete! Time: {GetFormattedTime(false)}");
     }
 
     IEnumerator AutoLoadNextLevel()

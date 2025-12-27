@@ -24,23 +24,16 @@ public class UIManager : MonoBehaviour
 
     [Header("Game Over Panel")]
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject gameWonPenel;
+    [SerializeField] private GameObject gameFailedPanel;
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private TextMeshProUGUI finalTimeText;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button menuButton;
 
-    [Header("Confirmation Panel")]
-    [SerializeField] private GameObject confirmationPanel;
-    [SerializeField] private TextMeshProUGUI confirmationText;
-    [SerializeField] private Button confirmYesButton;
-    [SerializeField] private Button confirmNoButton;
-
-    [Header("Preview UI")]
-    [SerializeField] private GameObject previewPanel;
-    [SerializeField] private TextMeshProUGUI previewText;
-
-    private System.Action onConfirmYes;
+   
+    private Coroutine comboCoroutine;
 
     private void Awake()
     {
@@ -66,8 +59,6 @@ public class UIManager : MonoBehaviour
             GameManager.Instance.OnTimerUpdate.AddListener(UpdateTimer);
             GameManager.Instance.OnLevelComplete.AddListener(ShowLevelComplete);
             GameManager.Instance.OnTimerExpired.AddListener(ShowGameOver);
-            GameManager.Instance.OnPreviewStart.AddListener(ShowPreview);
-            GameManager.Instance.OnPreviewEnd.AddListener(HidePreview);
         }
 
         if (nextLevelButton != null)
@@ -79,18 +70,12 @@ public class UIManager : MonoBehaviour
         if (menuButton != null)
             menuButton.onClick.AddListener(OnMenuClicked);
 
-        if (confirmYesButton != null)
-            confirmYesButton.onClick.AddListener(OnConfirmYes);
-
-        if (confirmNoButton != null)
-            confirmNoButton.onClick.AddListener(OnConfirmNo);
+       
     }
 
     private void HideAllPanels()
     {
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
-        if (confirmationPanel != null) confirmationPanel.SetActive(false);
-        if (previewPanel != null) previewPanel.SetActive(false);
         if (comboPanel != null) comboPanel.SetActive(false);
     }
 
@@ -98,7 +83,7 @@ public class UIManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = $"Score: {score}/ ";
+            scoreText.text = score.ToString();
         }
 
     }
@@ -116,11 +101,23 @@ public class UIManager : MonoBehaviour
                 comboMultiplierText.text = $"x{multiplier}";
             }
 
+            if (comboCoroutine != null)
+            {
+                StopCoroutine(comboCoroutine);
+            }
+            comboCoroutine = StartCoroutine(HideComboPanelAfterDelay());
+
         }
         else
         {
             if (comboPanel != null) comboPanel.SetActive(false);
         }
+    }
+
+    private System.Collections.IEnumerator HideComboPanelAfterDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        if (comboPanel != null) comboPanel.SetActive(false);
     }
 
     public void UpdateTimer(float remainingTime)
@@ -131,45 +128,22 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SetLevelInfo(string levelName, int levelNumber)
+    public void SetLevelInfo( int levelNumber)
     {
-        if (levelNameText != null)
-        {
-            levelNameText.text = levelName;
-        }
-
         if (levelNumberText != null)
         {
             levelNumberText.text = $"Level {levelNumber}";
         }
     }
 
-    private void ShowPreview()
-    {
-        if (previewPanel != null)
-        {
-            previewPanel.SetActive(true);
-            if (previewText != null)
-            {
-                previewText.text = "Memorize the cards!";
-            }
-        }
-    }
-
-    private void HidePreview()
-    {
-        if (previewPanel != null)
-        {
-            previewPanel.SetActive(false);
-        }
-    }
+  
 
     private void ShowLevelComplete(float completionTime)
     {
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
-
+            gameWonPenel.SetActive(true);
            
             if (finalScoreText != null)
             {
@@ -194,12 +168,8 @@ public class UIManager : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
-
-            if (finalScoreText != null)
-            {
-                finalScoreText.text = $"Final Score: {ScoringManager.Instance.Score}";
-            }
-
+            gameFailedPanel.SetActive(true);
+           
             if (nextLevelButton != null)
             {
                 nextLevelButton.gameObject.SetActive(false);
@@ -221,53 +191,9 @@ public class UIManager : MonoBehaviour
 
     private void OnMenuClicked()
     {
-        ShowConfirmation("Return to Menu?", () =>
-        {
-            SceneManager.LoadScene("MenuScene");
-        });
+        SceneManager.LoadScene("MainMenu");
     }
 
-    public void ShowConfirmation(string message, System.Action onConfirm)
-    {
-        if (confirmationPanel != null)
-        {
-            confirmationPanel.SetActive(true);
-
-            if (confirmationText != null)
-            {
-                confirmationText.text = message;
-            }
-
-            onConfirmYes = onConfirm;
-        }
-    }
-
-    private void OnConfirmYes()
-    {
-        if (confirmationPanel != null)
-        {
-            confirmationPanel.SetActive(false);
-        }
-
-        onConfirmYes?.Invoke();
-        onConfirmYes = null;
-    }
-
-    private void OnConfirmNo()
-    {
-        if (confirmationPanel != null)
-        {
-            confirmationPanel.SetActive(false);
-        }
-
-        onConfirmYes = null;
-    }
-
-    public void OnBackButtonClicked()
-    {
-        ShowConfirmation("Return to Level Selection?", () =>
-        {
-            SceneManager.LoadScene("LevelSelectionScene");
-        });
-    }
+  
+  
 }
