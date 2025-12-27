@@ -261,8 +261,6 @@ public class GameManager : MonoBehaviour
         if (LevelManager.Instance != null)
         {
             LevelConfig level = LevelManager.Instance.CurrentLevel;
-            ScoringManager.Instance.AddTimeBonus(elapsedTime, level.timeBonusMultiplier * 100);
-
             int levelNumber = LevelManager.Instance.CurrentLevelNumber;
             int score = ScoringManager.Instance.Score;
             // Fix: Pass levelNumber directly (1-based) as expected by SaveSystem and LevelSelectionManager
@@ -270,27 +268,12 @@ public class GameManager : MonoBehaviour
 
             if (LevelManager.Instance.HasNextLevel())
             {
-                StartCoroutine(AutoLoadNextLevel());
+               // StartCoroutine(AutoLoadNextLevel());
             }
         }
-        else
-        {
-            ScoringManager.Instance.AddTimeBonus(elapsedTime);
-        }
-
-       
         SaveSystem.Save();
 
         Debug.Log($"Level Complete! Time: {GetFormattedTime(false)}");
-    }
-
-    IEnumerator AutoLoadNextLevel()
-    {
-        yield return new WaitForSeconds(3f);
-
-        if (!isGameOver) yield break;
-
-        LoadNextLevel();
     }
 
     private void TimerExpired()

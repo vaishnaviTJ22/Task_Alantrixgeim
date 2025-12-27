@@ -37,7 +37,7 @@ public static class SaveSystem
             LevelManager.Instance.LoadLevel(data.currentLevel - 1);
         }
 
-       // ScoringManager.Instance.SetScore(data.score);
+        // ScoringManager.Instance.SetScore(data.score); // Removed to prevent previous score persistence
     }
 
     public static void SaveLevelProgress(int levelNumber, int score, bool completed)

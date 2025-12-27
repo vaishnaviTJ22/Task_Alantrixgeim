@@ -29,7 +29,7 @@ public class LevelConfig : ScriptableObject
     [Header("Scoring")]
     public int matchBonus = 100;
     public int mismatchPenalty = 10;
-    public int targetScore = 1000;
+
 
     [Header("Card Theme")]
     public Sprite cardBackSprite;

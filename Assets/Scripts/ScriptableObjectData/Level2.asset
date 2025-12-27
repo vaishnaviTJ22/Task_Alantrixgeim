@@ -19,14 +19,14 @@ MonoBehaviour:
   usePreview: 1
   previewDuration: 2
   useTimeLimit: 1
-  timeLimitSeconds: 180
+  timeLimitSeconds: 120
   timeBonusMultiplier: 10
   cardFlipSpeed: 0.3
   mismatchHideDelay: 0.1
   matchBonus: 100
   mismatchPenalty: 10
   targetScore: 1000
-  cardBackSprite: {fileID: 21300056, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
+  cardBackSprite: {fileID: 21300054, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
   cardFrontSprites:
-  - {fileID: 21300000, guid: b8c2e5c7900ec4f52b5f34d5123956fb, type: 3}
-  - {fileID: 21300000, guid: 74d6add63d3f94693bda5fb910f4504a, type: 3}
+  - {fileID: 21300000, guid: ab4a00deec4e94d04ad861f700bf110f, type: 3}
+  - {fileID: 21300000, guid: 2728a2639cbc447b3a9e7dee53589ff1, type: 3}

@@ -10,23 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c063abfc1e1d2654399a19bb9791b181, type: 3}
-  m_Name: Level1
+  m_Name: Level4
   m_EditorClassIdentifier: 
-  levelNumber: 1
-  levelName: Easy
-  rows: 2
-  columns: 2
+  levelNumber: 4
+  levelName: 
+  rows: 4
+  columns: 3
   usePreview: 1
-  previewDuration: 1
+  previewDuration: 2
   useTimeLimit: 1
-  timeLimitSeconds: 60
+  timeLimitSeconds: 180
   timeBonusMultiplier: 10
   cardFlipSpeed: 0.3
-  mismatchHideDelay: 0.1
+  mismatchHideDelay: 0.6
   matchBonus: 100
   mismatchPenalty: 10
-  targetScore: 1000
   cardBackSprite: {fileID: 21300054, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
   cardFrontSprites:
-  - {fileID: 21300000, guid: ab4a00deec4e94d04ad861f700bf110f, type: 3}
-  - {fileID: 21300000, guid: 5a35768ae338c4cfd8f2846a8f7658d0, type: 3}
+  - {fileID: 21300000, guid: 8a86569abdf3a478a97d68270b983e0f, type: 3}
+  - {fileID: 21300000, guid: a1d247e4109aa46acaf200aea98f96af, type: 3}
+  - {fileID: 21300000, guid: 9ef2bb753400c4f248d2ded837ced26d, type: 3}
+  - {fileID: 21300000, guid: 0929e1eb196854e54949fb519de7af91, type: 3}

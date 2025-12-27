@@ -56,6 +56,7 @@ public class LevelManager : MonoBehaviour
         }
 
         BoardManager.Instance.GenerateBoard(level.rows, level.columns, level);
+        ScoringManager.Instance.ResetScore();
         ScoringManager.Instance.SetLevelScoring(level.matchBonus, level.mismatchPenalty);
         if (level.usePreview)
         {

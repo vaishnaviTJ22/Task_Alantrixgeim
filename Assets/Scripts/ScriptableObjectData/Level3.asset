@@ -26,8 +26,8 @@ MonoBehaviour:
   matchBonus: 100
   mismatchPenalty: 10
   targetScore: 1000
-  cardBackSprite: {fileID: 21300056, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
+  cardBackSprite: {fileID: 21300054, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
   cardFrontSprites:
-  - {fileID: 21300000, guid: 74d6add63d3f94693bda5fb910f4504a, type: 3}
+  - {fileID: 21300000, guid: 9ffae26c9db534d53b6bcf163450eba2, type: 3}
   - {fileID: 21300000, guid: ae57ac7ca063e404db09159e40a91546, type: 3}
   - {fileID: 21300000, guid: f998a422b5a134f98876805c20583285, type: 3}

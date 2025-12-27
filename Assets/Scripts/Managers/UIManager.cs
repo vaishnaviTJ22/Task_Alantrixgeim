@@ -158,7 +158,7 @@ public class UIManager : MonoBehaviour
             if (nextLevelButton != null)
             {
                 bool hasNext = LevelManager.Instance != null && LevelManager.Instance.HasNextLevel();
-                nextLevelButton.gameObject.SetActive(hasNext);
+                nextLevelButton.transform.parent.gameObject.SetActive(hasNext);
             }
         }
     }
@@ -173,8 +173,19 @@ public class UIManager : MonoBehaviour
            
             if (nextLevelButton != null)
             {
-                nextLevelButton.gameObject.SetActive(false);
+                nextLevelButton.transform.parent.gameObject.SetActive(false);
+                HorizontalLayoutGroup layoutGroup =
+                nextLevelButton.GetComponentInParent<HorizontalLayoutGroup>();
+
+                if (layoutGroup != null)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(
+                        layoutGroup.GetComponent<RectTransform>()
+                    );
+                }
+
             }
+
         }
     }
 
