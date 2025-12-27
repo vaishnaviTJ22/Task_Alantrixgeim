@@ -7,7 +7,6 @@ public class SaveData
     public int currentLevel;
     public int score;
     public int highestUnlockedLevel;
-    public List<int> matchedCardIDs;
     public List<LevelProgress> levelScores;
 }
 

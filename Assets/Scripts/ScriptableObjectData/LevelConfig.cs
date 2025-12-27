@@ -45,9 +45,9 @@ public class LevelConfig : ScriptableObject
             return false;
         }
 
-        if (cardFrontSprites == null || cardFrontSprites.Length < TotalCards / 2)
+        if (cardFrontSprites == null || cardFrontSprites.Length == 0)
         {
-            Debug.LogError($"Level {levelNumber}: Need at least {TotalCards / 2} unique card sprites!");
+            Debug.LogError($"Level {levelNumber}: Need at least 1 card sprite!");
             return false;
         }
 

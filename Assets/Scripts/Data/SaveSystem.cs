@@ -12,15 +12,8 @@ public static class SaveSystem
         SaveData data = new SaveData
         {
             currentLevel = LevelManager.Instance.CurrentLevelNumber,
-            score = ScoringManager.Instance.Score,
-            matchedCardIDs = new List<int>()
+            score = ScoringManager.Instance.Score
         };
-
-        foreach (var card in BoardManager.Instance.GetCards())
-        {
-            if (card.state == CardState.Matched)
-                data.matchedCardIDs.Add(card.cardID);
-        }
 
         File.WriteAllText(path, JsonUtility.ToJson(data, true));
     }
@@ -37,12 +30,6 @@ public static class SaveSystem
         }
 
         ScoringManager.Instance.SetScore(data.score);
-
-        foreach (var card in BoardManager.Instance.GetCards())
-        {
-            if (data.matchedCardIDs.Contains(card.cardID))
-                card.SetMatched();
-        }
     }
 
     public static void SaveLevelProgress(int levelNumber, int score, bool completed)

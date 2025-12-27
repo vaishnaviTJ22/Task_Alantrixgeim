@@ -60,9 +60,10 @@ public class BoardManager : MonoBehaviour
 
                 if (levelConfig != null)
                 {
+                    int spriteIndex = ids[index] % levelConfig.cardFrontSprites.Length;
                     card.SetCardSprites(
                         levelConfig.cardBackSprite,
-                        levelConfig.cardFrontSprites[ids[index]]
+                        levelConfig.cardFrontSprites[spriteIndex]
                     );
                     card.SetFlipSpeed(levelConfig.cardFlipSpeed);
                 }

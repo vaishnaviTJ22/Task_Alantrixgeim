@@ -7,8 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("Preview Settings")]
-    public float defaultPreviewDuration = 2f;
 
     [Header("Timer Events")]
     public UnityEvent<float> OnTimerUpdate;
@@ -39,17 +37,24 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (LevelManager.Instance != null)
+        var savedData = SaveSystem.LoadFullData();
+
+        if (savedData != null)
         {
-            LevelManager.Instance.LoadLevel(0);
+            SaveSystem.Load();
         }
         else
         {
-            BoardManager.Instance.GenerateBoard(4, 4);
-          //  StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
+            if (LevelManager.Instance != null)
+            {
+                LevelManager.Instance.LoadLevel(0);
+            }
+            else
+            {
+                BoardManager.Instance.GenerateBoard(4, 4);
+                //  StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
+            }
         }
-
-        SaveSystem.Load();
     }
 
     private void Update()
@@ -99,11 +104,12 @@ public class GameManager : MonoBehaviour
             card.FlipBack();
         }
 
-        //yield return new WaitForSeconds(0.5f);
-
-        //EnableAllCardsInteraction();
+        yield return new WaitForSeconds(0.5f);
 
         isInPreview = false;
+        
+        EnableAllCardsInteraction();
+
         OnPreviewEnd?.Invoke();
 
         if (startTimerAfter)
