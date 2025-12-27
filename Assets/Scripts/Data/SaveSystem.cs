@@ -9,12 +9,20 @@ public static class SaveSystem
 
     public static void Save()
     {
-        SaveData data = new SaveData
+        SaveData data = LoadFullData();
+        
+        if (data == null)
         {
-            currentLevel = LevelManager.Instance.CurrentLevelNumber,
-            score = ScoringManager.Instance.Score
-        };
+            data = new SaveData
+            {
+                highestUnlockedLevel = 1,
+                levelScores = new List<LevelProgress>()
+            };
+        }
 
+        data.currentLevel = LevelManager.Instance.CurrentLevelNumber;
+        data.score = ScoringManager.Instance.Score;
+        
         File.WriteAllText(path, JsonUtility.ToJson(data, true));
     }
 
