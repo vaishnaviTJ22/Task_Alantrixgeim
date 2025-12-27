@@ -7,7 +7,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip flip;
     public AudioClip match;
     public AudioClip mismatch;
-    public AudioClip gameOver;
+    public AudioClip gameOverWon;
+    public AudioClip gameOverLoss;
 
     private AudioSource source;
 
@@ -20,5 +21,6 @@ public class AudioManager : MonoBehaviour
     public void PlayFlip() => source.PlayOneShot(flip);
     public void PlayMatch() => source.PlayOneShot(match);
     public void PlayMismatch() => source.PlayOneShot(mismatch);
-    public void PlayGameOver() => source.PlayOneShot(gameOver);
+    public void PlayGameOverWon() => source.PlayOneShot(gameOverWon);
+    public void PlayGameOverLoss() => source.PlayOneShot(gameOverLoss);
 }

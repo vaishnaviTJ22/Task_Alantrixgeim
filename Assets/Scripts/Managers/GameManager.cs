@@ -278,7 +278,7 @@ public class GameManager : MonoBehaviour
             ScoringManager.Instance.AddTimeBonus(elapsedTime);
         }
 
-        AudioManager.Instance?.PlayGameOver();
+       
         SaveSystem.Save();
 
         Debug.Log($"Level Complete! Time: {GetFormattedTime(false)}");
@@ -304,7 +304,6 @@ public class GameManager : MonoBehaviour
 
         DisableAllCardsInteraction();
 
-        AudioManager.Instance?.PlayGameOver();
     }
 
     private void DisableAllCardsInteraction()

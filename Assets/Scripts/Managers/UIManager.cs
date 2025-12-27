@@ -144,7 +144,7 @@ public class UIManager : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
             gameWonPenel.SetActive(true);
-           
+            AudioManager.Instance?.PlayGameOverWon();
             if (finalScoreText != null)
             {
                 finalScoreText.text = $"Final Score: {ScoringManager.Instance.Score}";
@@ -167,6 +167,7 @@ public class UIManager : MonoBehaviour
     {
         if (gameOverPanel != null)
         {
+            AudioManager.Instance?.PlayGameOverLoss();
             gameOverPanel.SetActive(true);
             gameFailedPanel.SetActive(true);
            
