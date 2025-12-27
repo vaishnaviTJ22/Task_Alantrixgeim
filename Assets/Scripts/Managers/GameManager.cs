@@ -52,7 +52,6 @@ public class GameManager : MonoBehaviour
             else
             {
                 BoardManager.Instance.GenerateBoard(4, 4);
-                //  StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
             }
         }
     }
@@ -335,7 +334,6 @@ public class GameManager : MonoBehaviour
         else
         {
             BoardManager.Instance.GenerateBoard(4, 4);
-           // StartCoroutine(StartPreviewPhase(defaultPreviewDuration, true));
         }
     }
 

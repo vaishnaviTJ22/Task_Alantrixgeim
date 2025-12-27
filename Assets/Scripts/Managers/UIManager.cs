@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -114,7 +115,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator HideComboPanelAfterDelay()
+    private IEnumerator HideComboPanelAfterDelay()
     {
         yield return new WaitForSeconds(1f);
         if (comboPanel != null) comboPanel.SetActive(false);

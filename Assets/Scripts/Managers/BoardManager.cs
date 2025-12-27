@@ -118,14 +118,4 @@ public class BoardManager : MonoBehaviour
 
     public List<Card> GetCards() => cards;
 
-    public void ResetAllCards()
-    {
-        foreach (var card in cards)
-        {
-            if (card != null)
-            {
-                card.ResetCard();
-            }
-        }
-    }
 }

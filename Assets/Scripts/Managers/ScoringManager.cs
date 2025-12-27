@@ -77,12 +77,6 @@ public class ScoringManager : MonoBehaviour
         currentMismatchPenalty = mismatchPenalty;
     }
 
-    public void SetScore(int score)
-    {
-        Score = score;
-        OnScoreChanged?.Invoke(Score);
-    }
-
     public void ResetScore()
     {
         Score = 0;
@@ -91,15 +85,6 @@ public class ScoringManager : MonoBehaviour
         OnScoreChanged?.Invoke(Score);
         OnComboChanged?.Invoke(Combo, ComboMultiplier);
         Debug.Log("Score Reset");
-    }
-
-
-    public void AddTimeBonus(float timeElapsed, int maxBonus = 500)
-    {
-        int bonus = Mathf.RoundToInt(maxBonus / Mathf.Max(1f, timeElapsed / 60f));
-        Score += bonus;
-        OnScoreChanged?.Invoke(Score);
-        Debug.Log($"Time Bonus! +{bonus}");
     }
 
 }
