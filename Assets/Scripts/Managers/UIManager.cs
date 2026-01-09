@@ -20,7 +20,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI comboMultiplierText;
 
     [Header("Level Info")]
-    [SerializeField] private TextMeshProUGUI levelNameText;
     [SerializeField] private TextMeshProUGUI levelNumberText;
 
     [Header("Game Over Panel")]
@@ -33,7 +32,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button restartButton;
     [SerializeField] private Button menuButton;
 
-   
     private Coroutine comboCoroutine;
 
     private void Awake()
@@ -70,7 +68,6 @@ public class UIManager : MonoBehaviour
 
         if (menuButton != null)
             menuButton.onClick.AddListener(OnMenuClicked);
-
        
     }
 
@@ -136,8 +133,6 @@ public class UIManager : MonoBehaviour
             levelNumberText.text = $"Level {levelNumber}";
         }
     }
-
-  
 
     private void ShowLevelComplete(float completionTime)
     {
@@ -206,7 +201,4 @@ public class UIManager : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
-
-  
-  
 }
